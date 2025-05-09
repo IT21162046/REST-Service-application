@@ -1,0 +1,7 @@
+[container.image]
+repository="laptoppcworld"  # DockerHub username
+name="package-tracker"
+tag="v0.1.0"
+
+[settings]
+buildImage=true
