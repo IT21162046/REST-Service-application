@@ -1,0 +1,20 @@
+groups:
+  - name: Ballerina Alerts
+    rules:
+      - alert: HighResponseTime
+        expr: response_time_seconds_value{http_url="/package/track/_trackingId_"} > 0.5
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High response time for package tracking"
+          description: "The response time for /package/track is above 0.5s for 1 minute."
+
+      - alert: ServiceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Service Down"
+          description: "Ballerina service is not reachable."

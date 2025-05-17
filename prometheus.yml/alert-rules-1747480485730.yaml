@@ -1,0 +1,188 @@
+apiVersion: 1
+groups:
+    - orgId: 1
+      name: package-tracker-eval
+      folder: Package Tracker Alerts
+      interval: 1m
+      rules:
+        - uid: felwhvxzi8m4gb
+          title: High Error Rate on /package/track
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: aelacbmlkms5cc
+              model:
+                editorMode: code
+                expr: increase(http_response_total{src_resource_path="/track/_", http_status_code_group=~"4xx|5xx"}[5m])
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 5
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: NoData
+          execErrState: Error
+          for: 1m
+          keepFiringFor: 1m
+          annotations:
+            description: This alert triggers when there are more than 5 error responses (4xx or 5xx) on /package/track within 5 minutes.
+            summary: High error rate detected on /package/track
+          labels:
+            service: package-tracker
+            severity: warning
+          isPaused: false
+          notification_settings:
+            receiver: Ruvini Ubeysinghe
+    - orgId: 1
+      name: package-tracker-group
+      folder: Package Tracker Alerts
+      interval: 1m
+      rules:
+        - uid: aelw2325lzojkb
+          title: High Request Rate - /package/track
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: aelacbmlkms5cc
+              model:
+                editorMode: code
+                expr: increase(requests_total_value{src_resource_path="/track/_"}[1m])
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 5
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: NoData
+          execErrState: Error
+          for: 1m
+          keepFiringFor: 2m
+          annotations:
+            description: This alert is triggered when the number of requests to the /package/track/{id} endpoint exceeds 5 within a 1-minute window.
+            summary: High request rate on /package/track detected
+          labels:
+            service: package-tracker
+          isPaused: false
+          notification_settings:
+            receiver: Ruvini Ubeysinghe
+    - orgId: 1
+      name: package-tracker-eval-group
+      folder: Ballerina Alerts
+      interval: 1m
+      rules:
+        - uid: belad4ea51c00c
+          title: High Response Time on /package/track
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: aelacbmlkms5cc
+              model:
+                disableTextWrap: false
+                editorMode: code
+                expr: response_time_seconds_value{src_resource_path="/track/_", http_method="GET"}
+                fullMetaSearch: false
+                includeNullMetadata: true
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+                useBackend: false
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 1
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: NoData
+          execErrState: Alerting
+          for: 1m
+          keepFiringFor: 2m
+          annotations:
+            description: Alerts if response time for /package/track exceeds 1s.
+            summary: High response time detected on the Package Tracker service.
+          labels:
+            app: package-tracker
+            severity: warning
+          isPaused: false
+          notification_settings:
+            receiver: Ruvini Ubeysinghe
